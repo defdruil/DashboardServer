@@ -13,21 +13,58 @@ const portNumber = 8080;
 const weekIncrementValue = 30/540;
 
 // Variables
+var startingDay = 1;
+var startingMonth = 6;
+var startingYear = 2025;
 var initialPopulation = 7000000000;
+var initialNumberOfZombies = 1;
+
+var interval;
+var currentValues;
 var history;
+
+var date;
 var totalHumans;
 var totalZombies;
 var totalLiving;
 var weekNumber;
 var weekValue;
 var lastWeekValue;
-var interval;
-var currentValues;
+var numberOfLivingsKilled;
+var numberOfZombiesKilled;
+var DiedWithoutBeingZombified;
+
+var livingsDeadByGun;
+var zombiesDeadByGun;
+
+var livingsDeadByAccident;
+var zombiesDeadByAccident;
+
+var livingsDeadByFire;
+var zombiesDeadByFire;
+
+var livingsDeadByDesease;
+
+var livingsDeadByHunger;
+var zombiesDeadByHunger;
+
+var livingsDeadByDehydratation;
+
+var livingsDeadByBladedWeapon;
+var zombiesDeadByBladedWeapon;
+
+var livingsDeadByTrap;
+var zombiesDeadByTrap;
+
+var livingsDeadByZombieBite;
+
+var livingsDeadFromOtherReason;
 
 // Methods
 // When the API is running a simulation, this is the function called by the interval
 function updateNumbers(){
 	weekNumber = weekNumber + 1;
+	date = addDays(date, 7);
 	if (totalZombies > 0 && totalLiving > 0){
 		killLivings();
 		killZombies();
@@ -46,17 +83,18 @@ function updateNumbers(){
 
 // Kill the Livings for the current week
 function killLivings(){
-	var numberOfKilled = getNumberOfKilled();
-	//console.log(numberOfKilled);
-	if (totalLiving - numberOfKilled <= 0){
+	numberOfLivingsKilled = getNumberOfKilled();
+	if (totalLiving - numberOfLivingsKilled <= 0){
+		numberOfLivingsKilled = totalLiving;
 		totalZombies = totalZombies + totalLiving;
 		totalLiving = 0;
 	} else {
-		totalLiving = totalLiving - numberOfKilled;
-		totalZombies = totalZombies + numberOfKilled;
+		totalLiving = totalLiving - numberOfLivingsKilled;
+		totalZombies = totalZombies + numberOfLivingsKilled;
 	}
+	generateLivingsDeadReasons();
 	var temptotalLiving = totalLiving;
-	console.log("Killing livings : " + temptotalLiving + " - " + numberOfKilled + " = " + totalLiving);
+	console.log("Killing livings : " + temptotalLiving + " - " + numberOfLivingsKilled + " = " + totalLiving);
 }
 
 // Returns the number of Living Killed for the current week
@@ -75,20 +113,191 @@ function getRatio(x){
 	return (6 / (-1 + (-4 * Math.exp(-0.6 * (x -7)))) + 6)/ 5.97683401013034;
 }
 
+// Sets all the reasons of death variables for the Livings beings
+function generateLivingsDeadReasons(){
+	var totalPercent = 0;
+	var currentPercent;
+	var reasonValue;
+
+	// Defining the modifier
+	currentPercent = getCloseModifier(5) + 0.5;
+	if (totalPercent + currentPercent >= 1){
+		currentPercent = 1 - totalPercent;
+		totalPercent = 1;
+	}
+	totalPercent += currentPercent;
+	// Calculating the number of deaths from the percentage
+	reasonValue = Math.floor(numberOfLivingsKilled * currentPercent);
+	livingsDeadByZombieBite += reasonValue;
+	
+	currentPercent = getCloseModifier(3) + 0.15;
+	if (totalPercent + currentPercent >= 1){
+		currentPercent = 1 - totalPercent;
+		totalPercent = 1;
+	}
+	totalPercent += currentPercent;
+	reasonValue = Math.floor(numberOfLivingsKilled * currentPercent);
+	livingsDeadByGun += reasonValue;
+	totalZombies -= reasonValue;
+	DiedWithoutBeingZombified += reasonValue;
+	
+	currentPercent = getCloseModifier(1) + 0.05;
+	if (totalPercent + currentPercent >= 1){
+		currentPercent = 1 - totalPercent;
+		totalPercent = 1;
+	}
+	totalPercent += currentPercent;
+	reasonValue = Math.floor(numberOfLivingsKilled * currentPercent);
+	livingsDeadByAccident += reasonValue;
+
+	currentPercent = getCloseModifier(1) + 0.05;
+	if (totalPercent + currentPercent >= 1){
+		currentPercent = 1 - totalPercent;
+		totalPercent = 1;
+	}
+	totalPercent += currentPercent;
+	reasonValue = Math.floor(numberOfLivingsKilled * currentPercent);
+	livingsDeadByBladedWeapon += reasonValue;
+	totalZombies -= reasonValue;
+	DiedWithoutBeingZombified += reasonValue;
+
+	currentPercent = getCloseModifier(1) + 0.05;
+	if (totalPercent + currentPercent >= 1){
+		currentPercent = 1 - totalPercent;
+		totalPercent = 1;
+	}
+	totalPercent += currentPercent;
+	reasonValue = Math.floor(numberOfLivingsKilled * currentPercent);
+	livingsDeadByFire += reasonValue;
+	totalZombies -= reasonValue;
+	DiedWithoutBeingZombified += reasonValue;
+
+	currentPercent = getCloseModifier(1) + 0.05;
+	if (totalPercent + currentPercent >= 1){
+		currentPercent = 1 - totalPercent;
+		totalPercent = 1;
+	}
+	totalPercent += currentPercent;
+	reasonValue = Math.floor(numberOfLivingsKilled * currentPercent);
+	livingsDeadByDesease += reasonValue;
+
+	currentPercent = getCloseModifier(1) + 0.05;
+	if (totalPercent + currentPercent >= 1){
+		currentPercent = 1 - totalPercent;
+		totalPercent = 1;
+	}
+	totalPercent += currentPercent;
+	reasonValue = Math.floor(numberOfLivingsKilled * currentPercent);
+	livingsDeadByHunger += reasonValue;
+
+	currentPercent = getCloseModifier(1) + 0.05;
+	if (totalPercent + currentPercent >= 1){
+		currentPercent = 1 - totalPercent;
+		totalPercent = 1;
+	}
+	totalPercent += currentPercent;
+	reasonValue = Math.floor(numberOfLivingsKilled * currentPercent);
+	livingsDeadByDehydratation += reasonValue;
+
+	currentPercent = getCloseModifier(1) + 0.05;
+	if (totalPercent + currentPercent >= 1){
+		currentPercent = 1 - totalPercent;
+		totalPercent = 1;
+	}
+	totalPercent += currentPercent;
+	reasonValue = Math.floor(numberOfLivingsKilled * currentPercent);
+	livingsDeadByTrap += reasonValue;
+	totalZombies -= reasonValue;
+	DiedWithoutBeingZombified += reasonValue;
+
+	livingsDeadFromOtherReason += Math.floor((1 - totalPercent) * numberOfLivingsKilled);
+}
+
+// Returns a percentage modifier minor or minor of the given step (Ex : give 3, get a value between 0.03 and -0.03)
+function getCloseModifier(step){
+	var tempStep = step * 2 + 1;
+	random = getRandomInt(tempStep) - step - 1;
+	return random / 100;
+}
+
 // Kills the Zombies
 function killZombies(){
 	var tempTotalZombies = totalZombies;
-	var ratio = 1 + (getRandomInt(6) / 10);
+	var ratio = 1 + (getRandomInt(25) / 100);
 	var newNumberOfZombies = Math.floor(totalZombies / ratio);
-	var numberOfZombiesKilles = totalZombies - newNumberOfZombies;
-	totalHumans = totalHumans - numberOfZombiesKilles;
+	numberOfZombiesKilled = totalZombies - newNumberOfZombies;
+	totalHumans = totalHumans - numberOfZombiesKilled;
+	generateZombiesDeadReasons();
 	totalZombies = newNumberOfZombies;
-	console.log("Killing Zombies : " + tempTotalZombies + " - " + numberOfZombiesKilles + " = " + totalZombies);
+	console.log("Killing Zombies : " + tempTotalZombies + " - " + numberOfZombiesKilled + " = " + totalZombies);
 }
 
 // Returns a random integer between 1 and max given value
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max + 1));
+}
+
+// Sets all the reasons of death variables for the Zombies beings
+function generateZombiesDeadReasons(){
+	var totalPercent = 0;
+	var currentPercent;
+	var reasonValue;
+
+	// Defining the modifier
+	currentPercent = getCloseModifier(12) + 0.6;
+	if (totalPercent + currentPercent >= 1){
+		currentPercent = 1 - totalPercent;
+		totalPercent = 1;
+	}
+	totalPercent += currentPercent;
+	// Calculating the number of deaths from the percentage
+	reasonValue = Math.floor(numberOfZombiesKilled * currentPercent);
+	zombiesDeadByGun += reasonValue;
+
+	currentPercent = getCloseModifier(4) + 0.2;
+	if (totalPercent + currentPercent >= 1){
+		currentPercent = 1 - totalPercent;
+		totalPercent = 1;
+	}
+	totalPercent += currentPercent;
+	reasonValue = Math.floor(numberOfZombiesKilled * currentPercent);
+	zombiesDeadByBladedWeapon += reasonValue;
+
+	currentPercent = getCloseModifier(1) + 0.05;
+	if (totalPercent + currentPercent >= 1){
+		currentPercent = 1 - totalPercent;
+		totalPercent = 1;
+	}
+	totalPercent += currentPercent;
+	reasonValue = Math.floor(numberOfZombiesKilled * currentPercent);
+	zombiesDeadByAccident += reasonValue;
+
+	currentPercent = getCloseModifier(1) + 0.05;
+	if (totalPercent + currentPercent >= 1){
+		currentPercent = 1 - totalPercent;
+		totalPercent = 1;
+	}
+	totalPercent += currentPercent;
+	reasonValue = Math.floor(numberOfZombiesKilled * currentPercent);
+	zombiesDeadByHunger += reasonValue;
+
+	currentPercent = getCloseModifier(1) + 0.05;
+	if (totalPercent + currentPercent >= 1){
+		currentPercent = 1 - totalPercent;
+		totalPercent = 1;
+	}
+	totalPercent += currentPercent;
+	reasonValue = Math.floor(numberOfZombiesKilled * currentPercent);
+	zombiesDeadByFire += reasonValue;
+
+	currentPercent = getCloseModifier(1) + 0.05;
+	if (totalPercent + currentPercent >= 1){
+		currentPercent = 1 - totalPercent;
+		totalPercent = 1;
+	}
+	totalPercent += currentPercent;
+	reasonValue = Math.floor(numberOfZombiesKilled * currentPercent);
+	zombiesDeadByTrap += reasonValue;
 }
 
 // Adds the current value log to the history
@@ -98,7 +307,41 @@ function appendHistory(){
 
 // Sets the current values
 function setCurrentValues(){
-	currentValues = {totalHumans : totalHumans, totalZombies : totalZombies, totalLiving : totalLiving, weekNumber : weekNumber, weekValue : weekValue}
+	currentValues = {
+		totalZombies : totalZombies, 
+		totalLiving : totalLiving, 
+		weekNumber : weekNumber, 
+		livingKilledThisWeek : numberOfLivingsKilled,
+		zombiesKilledThisWeek : numberOfZombiesKilled,
+		DiedWithoutBeingZombified : DiedWithoutBeingZombified,
+		deathReasons : {
+			livingsDeadByZombieBite : livingsDeadByZombieBite,
+			livingsDeadByGun : livingsDeadByGun,
+			livingsDeadByAccident : livingsDeadByAccident,
+			livingsDeadByFire : livingsDeadByFire,
+			livingsDeadByHunger : livingsDeadByHunger,
+			livingsDeadByDesease :livingsDeadByDesease,
+			livingsDeadByDehydratation : livingsDeadByDehydratation,
+			livingsDeadByBladedWeapon : livingsDeadByBladedWeapon,
+			livingsDeadByTrap : livingsDeadByTrap,
+			livingsDeadFromOtherReason : livingsDeadFromOtherReason,
+			zombiesDeadByGun : zombiesDeadByGun,
+			zombiesDeadByAccident : zombiesDeadByAccident,
+			zombiesDeadByFire : zombiesDeadByFire,
+			zombiesDeadByHunger : zombiesDeadByHunger,
+			zombiesDeadByBladedWeapon : zombiesDeadByBladedWeapon,
+			zombiesDeadByTrap : zombiesDeadByTrap
+		},
+		day : date.getDate(), 
+		month : date.getMonth(), 
+		year : date.getFullYear()
+	};
+}
+
+// Adds the given number of days to the given date
+function addDays(date, days) {
+	date.setDate(date.getDate() + days);
+	return date;
 }
 
 // Starts the interval for simulation
@@ -120,13 +363,36 @@ function stopInterval(){
 
 // Resets the initial values for the given population
 function resetToPopulation(population){
+	stopInterval();
+	date = new Date(startingYear, startingMonth, startingDay);
 	initialPopulation = population;
 	totalHumans = population;
-	totalZombies = 1;
+	totalZombies = initialNumberOfZombies;
 	totalLiving = totalHumans - totalZombies;
 	weekNumber = 0;
 	weekValue = weekIncrementValue;
 	lastWeekValue = 0;
+	numberOfLivingsKilled = 0;
+	numberOfZombiesKilled = 0;
+	DiedWithoutBeingZombified = 0;
+
+	livingsDeadByGun = 0;
+	zombiesDeadByGun = 0;
+	livingsDeadByAccident = 0;
+	zombiesDeadByAccident = 0;
+	livingsDeadByFire = 0;
+	zombiesDeadByFire = 0;
+	livingsDeadByDesease = 0;
+	livingsDeadByHunger = 0;
+	zombiesDeadByHunger = 0;
+	livingsDeadByDehydratation = 0;
+	livingsDeadByBladedWeapon = 0;
+	zombiesDeadByBladedWeapon = 0;
+	livingsDeadByTrap = 0;
+	zombiesDeadByTrap = 0;
+	livingsDeadByZombieBite = 0;
+	livingsDeadFromOtherReason = 0;
+
 	setCurrentValues();
 	history = new Array();
 	console.log("Server reset to population : " + population);
@@ -134,13 +400,6 @@ function resetToPopulation(population){
 
 // Indique que le dossier /public contient des fichiers statiques (middleware chargé de base)
 app.use(express.static(__dirname + '/public'));
-
-// Testing Route
-/*app.get('/', function(req, res) {
-    res.setHeader('Content-Type', 'application/json;');
-	var object = { name : 'name' , test : 'test', number : 5};
-    res.end(JSON.stringify(object));
-});*/
 
 // Route that returns the current values of the server for the current simulation
 app.get('/currentValues', function (req, res ){
@@ -162,7 +421,6 @@ app.get('/getHistory', function(req, res) {
 app.get('/resetForPopulation/:population', function(req, res) {
 	console.log("Reset with new population requested.");
 	res.setHeader('Content-Type', 'application/json;');
-	stopInterval();
 	resetToPopulation(req.params.population);
 	res.end(JSON.stringify(true));
 });
