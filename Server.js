@@ -311,8 +311,8 @@ function setCurrentValues(){
 		totalZombies : totalZombies, 
 		totalLiving : totalLiving, 
 		weekNumber : weekNumber, 
-		livingKilledThisWeek : numberOfLivingsKilled,
-		zombiesKilledThisWeek : numberOfZombiesKilled,
+		numberOfLivingsKilled : numberOfLivingsKilled,
+		numberOfZombiesKilled : numberOfZombiesKilled,
 		DiedWithoutBeingZombified : DiedWithoutBeingZombified,
 		deathReasons : {
 			livingsDeadByZombieBite : livingsDeadByZombieBite,
@@ -454,6 +454,7 @@ app.use(function(req, res, next){
 	res.setHeader('Content-Type', 'text/plain');
 	res.status(404).send('Page introuvable !');
 	console.log("Unknown page requested");
+	console.log(req);
 });
 
 // Launch the listening to the app
