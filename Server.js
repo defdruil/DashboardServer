@@ -11,12 +11,13 @@ console.log('App __dirname : ' +__dirname);
 // Constants
 const portNumber = 8080;
 const weekIncrementValue = 30/540;
+const basePopulation = 7000000000;
 
 // Variables
 var startingDay = 1;
-var startingMonth = 6;
-var startingYear = 2025;
-var initialPopulation = 7000000000;
+var startingMonth = 1;
+var startingYear = 2050;
+var initialPopulation = basePopulation;
 var initialNumberOfZombies = 1;
 
 var interval;
@@ -445,7 +446,7 @@ app.get('/stop', function(req, res){
 app.get('/reset', function(req, res){
 	console.log("Reset requested.");
 	res.setHeader('Content-Type', 'application/json;');
-	resetToPopulation(initialPopulation);
+	resetToPopulation(basePopulation);
 	res.end(JSON.stringify(true));
 });
 
@@ -458,6 +459,6 @@ app.use(function(req, res, next){
 });
 
 // Launch the listening to the app
-resetToPopulation(initialPopulation);
+resetToPopulation(basePopulation);
 console.log("Listening to port " + portNumber);
 app.listen(portNumber);
